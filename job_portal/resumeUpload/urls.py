@@ -4,4 +4,5 @@ from .views import *
 
 urlpatterns = [
     path('', FileUploadView.as_view()),
+    path('',include('student.urls'))
 ]
