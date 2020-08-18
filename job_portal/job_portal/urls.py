@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('apis/', include('student.urls')),
     path('resumeUpload/',include('resumeUpload.urls')),
+    path('', include('apis.urls')),
 ]
 
 if settings.DEBUG:
