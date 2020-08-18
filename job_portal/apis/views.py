@@ -7,8 +7,8 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Posts
-from .serializers import PostSerializer,UserSerializer
+from .models import Posts, Applications
+from .serializers import PostSerializer,UserSerializer, ApplicationSerializer
 
 def index(request):
     return HttpResponse('Hello from django')
@@ -68,3 +68,22 @@ class LoginView(APIView):
             return Response({ 'token':user.auth_token.key })
         else:
             return Response({'error': 'Wrong Credentials'}, status=404)
+
+class JobApply(APIView):
+    def get_object(self, pk):
+        try:
+            return Posts.objects.get(pk=pk)
+        except Posts.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        applications = Applications.objects.all()
+        serializer = ApplicationSerializer(applications, many=True)
+        return Response(serializer.data)
+    def post(self,request, pk, format=None):
+        request.data['applicant'] = request.user.id
+        serializer = ApplicationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(job_id=Posts.objects.get(pk=pk))
+            return Response(serializer.data)
+        return Response(serializer.errors, status=401)
