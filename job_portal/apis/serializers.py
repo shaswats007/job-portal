@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 
 from django.conf import settings
 
-from .models import Posts, CustomUser as MyUser
+from .models import Posts,Applications, CustomUser as MyUser
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,3 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         Token.objects.create(user=user)
         return user
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Applications
+        fields = '__all__'
