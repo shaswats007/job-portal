@@ -6,12 +6,17 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
+from .serializers import ResumeSerializer
+from rest_framework.parsers import FileUploadParser
 
-from .models import Posts, Applications, CustomUser
+from .models import Posts, Applications,Resume
 from .serializers import PostSerializer,UserSerializer, ApplicationSerializer
 
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 def index(request):
-    return HttpResponse('Hello from django')
+    return HttpResponse('This is the landing page of Job Portal')
 
 def error(request):
     return HttpResponse('You reached invalid URL')
@@ -71,6 +76,25 @@ class LoginView(APIView):
         else:
             return Response({'error': 'Wrong Credentials'}, status=404)
 
+
+
+class ResumeUploadView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def post(self, request, *args, **kwargs):
+
+      file_serializer = ResumeSerializer(data=request.data)
+
+      if file_serializer.is_valid():
+          file_serializer.save()
+          return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+      else:
+          return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self,request,*args,**kwargs):
+        all_resume=Resume.objects.all()
+        serializer = ResumeSerializer(all_resume, many=True)
+        return Response(serializer.data)
 class JobApply(APIView):
     def get_object(self, pk):
         try:
