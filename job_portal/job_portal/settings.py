@@ -29,8 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 #Media Locations
-MEDIA_URL =  '/resume/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "resume")
+MEDIA_URL =  '/savedResume/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "savedResume")
 # Application definition
 
 INSTALLED_APPS = [
