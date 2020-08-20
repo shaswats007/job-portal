@@ -79,7 +79,7 @@ class JobApply(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        applications = Applications.objects.all()
+        applications = Applications.objects.filter(job_id=pk)
         serializer = ApplicationSerializer(applications, many=True)
         return Response(serializer.data)
     def post(self,request, pk, format=None):
