@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import index,error,PostList, PostDetails, UserCreate, LoginView,JobApply,UserDetails
+from .views import index,error,PostList, PostDetails, UserCreate, LoginView,JobApply,UserDetails,ResumeUploadView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('users/', UserCreate.as_view(), name = 'user_create'),
     path('users/profile/', UserDetails.as_view(), name='profile'),
     path('login/', LoginView.as_view(), name = 'login'),
+    path('resume/', ResumeUploadView.as_view(),name='resumeUpload')
 ]
