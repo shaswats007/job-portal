@@ -9,8 +9,8 @@ from rest_framework import status
 from .serializers import ResumeSerializer
 from rest_framework.parsers import FileUploadParser
 
-from .models import Posts,Resume
-from .serializers import PostSerializer,UserSerializer
+from .models import Posts, Applications,Resume
+from .serializers import PostSerializer,UserSerializer, ApplicationSerializer
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -93,3 +93,21 @@ class ResumeUploadView(APIView):
         all_resume=Resume.objects.all()
         serializer = ResumeSerializer(all_resume, many=True)
         return Response(serializer.data)
+class JobApply(APIView):
+    def get_object(self, pk):
+        try:
+            return Posts.objects.get(pk=pk)
+        except Posts.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        applications = Applications.objects.all()
+        serializer = ApplicationSerializer(applications, many=True)
+        return Response(serializer.data)
+    def post(self,request, pk, format=None):
+        request.data['applicant'] = request.user.id
+        serializer = ApplicationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(job_id=Posts.objects.get(pk=pk))
+            return Response(serializer.data)
+        return Response(serializer.errors, status=401)

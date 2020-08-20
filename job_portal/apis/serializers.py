@@ -4,7 +4,7 @@ from .models import Resume
 
 from django.conf import settings
 
-from .models import Posts, CustomUser as MyUser
+from .models import Posts,Applications, CustomUser as MyUser
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,3 +32,7 @@ class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = "__all__"
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Applications
+        fields = '__all__'
