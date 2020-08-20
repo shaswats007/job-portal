@@ -18,6 +18,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 def index(request):
     return HttpResponse('This is the landing page of Job Portal')
 
+def error(request):
+    return HttpResponse('You reached invalid URL')
 
 class PostList(APIView):
     def get(self, request, format=None):
@@ -50,12 +52,12 @@ class PostDetails(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_404_BAD_REQUEST)
+        return Response(serializer.errors, status=404)
 
     def delete(self, request, pk, format=None):
         post = self.get_object(pk)
         post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=204)
 
 class UserCreate(generics.CreateAPIView):
     permission_classes = ()
@@ -101,7 +103,7 @@ class JobApply(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        applications = Applications.objects.all()
+        applications = Applications.objects.filter(job_id=pk)
         serializer = ApplicationSerializer(applications, many=True)
         return Response(serializer.data)
     def post(self,request, pk, format=None):
@@ -111,3 +113,19 @@ class JobApply(APIView):
             serializer.save(job_id=Posts.objects.get(pk=pk))
             return Response(serializer.data)
         return Response(serializer.errors, status=401)
+
+class UserDetails(APIView):
+
+    def get(self, request):
+        user = CustomUser.objects.get(pk=request.user.id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def put(self, request):
+        user = CustomUser.objects.get(pk = request.user.id)
+        request.data['user_type'] = user.user_type
+        serializer = UserSerializer(user, data = request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = 201)
+        return Response(serializer.errors, status = 404)
